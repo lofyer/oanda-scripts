@@ -1,0 +1,6 @@
+You should use your own id and token like this:
+
+$ cat account.txt
+[account]
+id = 1234567
+token = 1234567890asdfghjjiojqijwncwioqnjioij
