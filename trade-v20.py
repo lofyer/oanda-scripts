@@ -9,13 +9,14 @@ class Trade20():
          Config.read("./account.txt")
          self.id = Config.get("account", "id")
          self.token = Config.get("account", "token")
+         self.instruments = Config.get("forex", "instrument")
 
     def showAccount(self):
         print self.id
         print self.token
 
     def listOrders(self):
-        print 
+        print "v20 is invalid for now."
 
 mytrade = Trade20()
 mytrade.showAccount()

@@ -1,6 +1,16 @@
+1. standard
+http://developer.oanda.com/rest-live/introduction/
+
+2. v20
+http://developer.oanda.com/rest-live-v20/introduction/
+
 You should use your own id and token like this:
 
+3. Ref
 $ cat account.txt
 [account]
 id = 1234567
 token = 1234567890asdfghjjiojqijwncwioqnjioij
+
+[forex]
+instruments = "EUR_USD, GBP_USD"
