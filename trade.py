@@ -8,96 +8,69 @@ import ConfigParser
 from pprint import pprint
 from datetime import datetime, timedelta
 
-Config = ConfigParser.ConfigParser()
-Config.read("./account.txt")
+class Trade():
+    def __init__(self):
+        Config = ConfigParser.ConfigParser()
+        Config.read("./account.txt")
+        self.id = Config.get("account", "id")
+        self.token = Config.get("account", "token")
+        self.instruments = Config.get("forex", "instrument")
+        self.api = oandapy.API(access_token=self.token)
 
-ACCOUNT = Config.get("account", "id")
-TOKEN = Config.get("account", "token")
-INSTRUMENT = Config.get("forex", "instrument")
+    def showAccount(self):
+        print "id: " + self.id
+        print "token: " + self.token
+        print "url: " + self.api.api_url
 
-api = oandapy.API(access_token=TOKEN)
+    def get_accounts(self):
+        all_accounts = self.api.get_accounts()
+        for i in all_accounts["accounts"]:
+            pprint(self.api.get_account(i["accountId"]))
+    
+    def get_instruments(self):
+        print "Available instruments:"
+        pprint(self.api.get_instruments(account_id=self.id))
 
-#
-# Get API information
-#
-print "API URL:\t%s" % api.api_url
+    def get_orders(self):
+        pprint(self.api.get_orders(account_id=self.id))
 
-#
-# Get instruments
-#
-print "***********************\n"
-print "Available instruments:"
-print "***********************\n"
-pprint(api.get_instruments(account_id=ACCOUNT))
+    def get_positions(self):
+        pprint(self.api.get_positions(account_id=self.id))
 
-#
-# Get Accounts information
-#
-info = api.get_accounts()
-for i in info["accounts"]:
-    print "***********************\n"
-    print "Account information:\n"
-    print "***********************\n"
-    pprint(api.get_account(i["accountId"]))
+    def get_prices(self):
+        pprint(self.api.get_prices(instruments=self.instruments))
 
-#
-# Get instruments position
-#
-print "***********************\n"
-print "Position:\n"
-print "***********************\n"
-pprint(api.get_positions(account_id=ACCOUNT))
+    def get_orders(self):
+        pprint(self.api.get_orders(account_id=self.id))
 
-#
-# Get price of exact ACCOUNT, INSTRUMENT
-#
-print "***********************\n"
-print "Prices of %s:\n" % INSTRUMENT
-print "***********************\n"
-price_response = api.get_prices(instruments=INSTRUMENT)
-pprint(price_response)
+    def open_order(self):
+        trade_expire = datetime.utcnow() + timedelta(days=1)
+        trade_expire = trade_expire.isoformat("T") + "Z"
+        buy_response = self.api.create_order(self.id,
+                instrument=self.instruments,
+                unit=1,
+                side='buy',
+                type='limit',
+                price=1.15,
+                expiry=trade_expire
+                )
+        pprint(buy_response)
 
-#
-# Get orders
-#
-print "***********************\n"
-print "Orders information:\n"
-print "***********************\n"
-orders = api.get_orders(account_id=ACCOUNT)
-pprint(orders)
+    def close_order(self):
+        pprint(self.api.close_order(account_id=self.id, buy_response["orderOpened"]["id"]))
 
-#
-# Open buy order
-#
-print "***********************\n"
-print "Open buy order:\n"
-print "***********************\n"
-trade_expire = datetime.utcnow() + timedelta(days=1)
-trade_expire = trade_expire.isoformat("T") + "Z"
+    def get_transactions(self):
+        pprint(self.api.get_transaction_history(account_id=self.id)
+    
 
-# Units must be greater than 1
-buy_response = api.create_order(ACCOUNT,
-    instrument=INSTRUMENT,
-    units=1,
-    side='buy',
-    type='limit',
-    price=1.15,
-    expiry=trade_expire
-)
-pprint(buy_response)
-
-#
-# Close buy orders
-#
-print "***********************\n"
-print "Close Buy order:\n"
-print "***********************\n"
-#close_response = api.close_order(account_id=ACCOUNT, buy_response["orderOpened"]["id"])
-
-#
-# Get transactions 
-#
-print "***********************\n"
-print "Transactions:\n"
-print "***********************\n"
-pprint(api.get_transaction_history(account_id=ACCOUNT))
+trade = Trade()
+#trade.showAccount()
+#trade.get_accounts()
+#trade.get_instruments()
+#trade.get_orders()
+#trade.get_positions()
+#trade.get_prices()
+#trade.get_orders()
+#trade.open_order()
+#trade.close_order()
+#trade.get_transactions()
