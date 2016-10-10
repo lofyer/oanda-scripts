@@ -46,7 +46,7 @@ class Trade():
     def open_order(self):
         trade_expire = datetime.utcnow() + timedelta(days=1)
         trade_expire = trade_expire.isoformat("T") + "Z"
-        buy_response = self.api.create_order(self.id,
+        self.buy_response = self.api.create_order(self.id,
                 instrument=self.instruments,
                 unit=1,
                 side='buy',
@@ -57,7 +57,7 @@ class Trade():
         pprint(buy_response)
 
     def close_order(self):
-        pprint(self.api.close_order(account_id=self.id, buy_response["orderOpened"]["id"]))
+        pprint(self.api.close_order(account_id=self.id, self.buy_response["orderOpened"]["id"]))
 
     def get_transactions(self):
         pprint(self.api.get_transaction_history(account_id=self.id)
